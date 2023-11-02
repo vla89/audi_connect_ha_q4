@@ -19,21 +19,50 @@ class CurrentVehicleDataResponse:
 class VehicleDataResponse:
     def __init__(self, data):
         self.data_fields = []
-        response = data.get("StoredVehicleDataResponse")
-        if response is None:
-            response = data.get("CurrentVehicleDataByRequestResponse")
+        batteryStatus = data["charging"]["batteryStatus"]["value"]["currentSOC_pct"]
+        cruisingRange = data["charging"]["batteryStatus"]["value"][
+            "cruisingRangeElectric_km"
+        ]
+        tsCarCaptured = data["charging"]["batteryStatus"]["value"][
+            "carCapturedTimestamp"
+        ]
+        milage = data["measurements"]["odometerStatus"]["value"]["odometer"]
+        milageTsCarCaptured = data["measurements"]["odometerStatus"]["value"][
+            "carCapturedTimestamp"
+        ]
+        socField = {
+            "textId": "TANK_LEVEL_IN_PERCENTAGE",
+            "value": batteryStatus,
+            "tsCarCaptured": tsCarCaptured,
+        }
+        rangeField = {
+            "textId": "TOTAL_RANGE",
+            "value": cruisingRange,
+            "tsCarCaptured": tsCarCaptured,
+        }
+        milageField = {
+            "textId": "UTC_TIME_AND_KILOMETER_STATUS",
+            "value": milage,
+            "tsCarCaptured": milageTsCarCaptured,
+        }
+        self.data_fields.append(Field(socField))
+        self.data_fields.append(Field(rangeField))
+        self.data_fields.append(Field(milageField))
+        # response = data.get("StoredVehicleDataResponse")
+        # if response is None:
+        #     response = data.get("CurrentVehicleDataByRequestResponse")
 
-        vehicle_data = response.get("vehicleData")
-        if vehicle_data is None:
-            return
+        # vehicle_data = response.get("vehicleData")
+        # if vehicle_data is None:
+        #     return
 
-        vehicle_data = vehicle_data.get("data")
-        for raw_data in vehicle_data:
-            raw_fields = raw_data.get("field")
-            if raw_fields is None:
-                continue
-            for raw_field in raw_fields:
-                self.data_fields.append(Field(raw_field))
+        # vehicle_data = vehicle_data.get("data")
+        # for raw_data in vehicle_data:
+        #     raw_fields = raw_data.get("field")
+        #     if raw_fields is None:
+        #         continue
+        #     for raw_field in raw_fields:
+        #         self.data_fields.append(Field(raw_field))
 
 
 class TripDataResponse:

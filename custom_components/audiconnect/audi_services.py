@@ -171,11 +171,18 @@ class AudiService:
         )
 
     async def get_stored_vehicle_data(self, vin: str):
-        self._api.use_token(self.vwToken)
+        # self._api.use_token(self.vwToken);
+        # data = await self._api.get(
+            # "{homeRegion}/fs-car/bs/vsr/v1/{type}/{country}/vehicles/{vin}/status".format(
+            #     homeRegion=await self._get_home_region(vin.upper()),
+            #     type=self._type,
+            #     country=self._country,
+            #     vin=vin.upper(),
+            # )
+        self._api.use_token(self._bearer_token_json);
         data = await self._api.get(
-            "{homeRegion}/fs-car/bs/vsr/v1/{type}/{country}/vehicles/{vin}/status".format(
-                homeRegion=await self._get_home_region(vin.upper()),
-                type=self._type, country=self._country, vin=vin.upper()
+            "https://emea.bff.cariad.digital/vehicle/v1/vehicles/{vin}/selectivestatus?jobs=all".format(
+                vin=vin.upper(),
             )
         )
         return VehicleDataResponse(data)

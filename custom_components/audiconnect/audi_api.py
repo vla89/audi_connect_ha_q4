@@ -60,7 +60,7 @@ class AudiAPI:
                         return response, txt
                     elif raw_contents:
                         return await response.read()
-                    elif response.status == 200 or response.status == 202:
+                    elif response.status == 200 or response.status == 202 or response.status == 207:
                         return await response.json(loads=json_loads)
                     else:
                         raise ClientResponseError(
