@@ -206,13 +206,19 @@ class AudiService:
         )
 
     async def get_stored_position(self, vin: str):
-        self._api.use_token(self.vwToken)
+        self._api.use_token(self._bearer_token_json);
         return await self._api.get(
-            "{homeRegion}/fs-car/bs/cf/v1/{type}/{country}/vehicles/{vin}/position".format(
-                homeRegion=await self._get_home_region(vin.upper()),
-                type=self._type, country=self._country, vin=vin.upper()
+            "https://emea.bff.cariad.digital/vehicle/v1/vehicles/{vin}/parkingposition".format(
+                vin=vin.upper(),
             )
         )
+        # self._api.use_token(self.vwToken)
+        # return await self._api.get(
+        #     "{homeRegion}/fs-car/bs/cf/v1/{type}/{country}/vehicles/{vin}/position".format(
+        #         homeRegion=await self._get_home_region(vin.upper()),
+        #         type=self._type, country=self._country, vin=vin.upper()
+        #     )
+        # )
 
     async def get_operations_list(self, vin: str):
         self._api.use_token(self.vwToken)
@@ -673,10 +679,10 @@ class AudiService:
                 allow_redirects=False,
                 rsp_wtxt=True,
             )
-            
+
             # this code is the old "vwToken"
             self.vwToken = json.loads(mbboauth_refresh_rsptxt)
-            
+
             # TR/2022-02-10: If a new refresh_token is provided, save it for further refreshes
             if "refresh_token" in self.vwToken:
                 self.mbboauthToken["refresh_token"] = self.vwToken["refresh_token"]
@@ -862,7 +868,7 @@ class AudiService:
 
         # form_data with password
         # 2022-01-29: new HTML response uses a js two build the html form data + button.
-        #             Therefore it's not possible to extract hmac and other form data. 
+        #             Therefore it's not possible to extract hmac and other form data.
         #             --> extract hmac from embedded js snippet.
         regex_res = re.findall('"hmac"\s*:\s*"[0-9a-fA-F]+"', email_rsptxt)
         if regex_res:

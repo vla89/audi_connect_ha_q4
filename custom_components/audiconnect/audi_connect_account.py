@@ -439,6 +439,8 @@ class AudiConnectVehicle:
                 for i in range(0, len(status.data_fields))
             }
             self._vehicle.state["last_update_time"] = status.data_fields[0].send_time
+            for state in status.states:
+                self._vehicle.state[state["name"]] = state["value"]
 
         except TimeoutError:
             raise
@@ -471,23 +473,31 @@ class AudiConnectVehicle:
 
         try:
             resp = await self._audi_service.get_stored_position(self._vehicle.vin)
-            if resp.get("findCarResponse") is not None:
-                position = resp["findCarResponse"]
-
-            if (
-                position.get("Position") is not None
-                and position["Position"].get("carCoordinate") is not None
-            ):
+            if resp is not None:
                 self._vehicle.state["position"] = {
-                    "latitude": get_attr(position, "Position.carCoordinate.latitude")
-                    / 1000000,
-                    "longitude": get_attr(position, "Position.carCoordinate.longitude")
-                    / 1000000,
-                    "timestamp": get_attr(position, "Position.timestampCarSentUTC"),
-                    "parktime": position.get("parkingTimeUTC")
-                    if position.get("parkingTimeUTC") is not None
-                    else get_attr(position, "Position.timestampCarSentUTC"),
+                    "latitude": resp["data"]["lat"],
+                    "longitude": resp["data"]["lon"],
+                    "timestamp": resp["data"]["carCapturedTimestamp"],
+                    "parktime": resp["data"]["carCapturedTimestamp"]
                 }
+
+            # if resp.get("findCarResponse") is not None:
+            #     position = resp["findCarResponse"]
+
+            # if (
+            #     position.get("Position") is not None
+            #     and position["Position"].get("carCoordinate") is not None
+            # ):
+                # self._vehicle.state["position"] = {
+                #     "latitude": get_attr(position, "Position.carCoordinate.latitude")
+                #     / 1000000,
+                #     "longitude": get_attr(position, "Position.carCoordinate.longitude")
+                #     / 1000000,
+                #     "timestamp": get_attr(position, "Position.timestampCarSentUTC"),
+                #     "parktime": position.get("parkingTimeUTC")
+                #     if position.get("parkingTimeUTC") is not None
+                #     else get_attr(position, "Position.timestampCarSentUTC"),
+                # }
 
         except TimeoutError:
             raise
@@ -1193,29 +1203,22 @@ class AudiConnectVehicle:
                 return parse_float(self._vehicle.state.get("actualChargeRate"))
             except ValueError:
                 return -1
-            
+
 
     @property
     def actual_charge_rate_supported(self):
-        check = self._vehicle.state.get("actualChargeRate")
-        if check is not None:
-            return True
+        return True
 
     @property
     def actual_charge_rate_unit(self):
-        if self.actual_charge_rate_supported:
-            res = self._vehicle.state.get("actualChargeRateUnit")
-            if res:
-                return res.replace("_per_", "/")
-
-            return res
+        return "km/h"
 
     @property
     def charging_power(self):
         """Return charging power"""
         if self.charging_power_supported:
             try:
-                return parse_int(self._vehicle.state.get("chargingPower")) / 1000
+                return parse_int(self._vehicle.state.get("chargingPower"))
             except ValueError:
                 return -1
 
@@ -1289,28 +1292,28 @@ class AudiConnectVehicle:
     def state_of_charge(self):
         """Return state of charge"""
         if self.state_of_charge_supported:
-            return parse_float(self._vehicle.state.get("stateOfCharge"))
+            return self._vehicle.state.get("stateOfCharge")
 
     @property
     def state_of_charge_supported(self):
         check = self._vehicle.state.get("stateOfCharge")
-        if check and parse_float(check):
+        if check:
             return True
 
     @property
     def remaining_charging_time(self):
         """Return remaining charging time"""
         if self.remaining_charging_time_supported:
-            res = parse_int(self._vehicle.state.get("remainingChargingTime"))
-            if res == 65535:
-                return "n/a"
-            else:
-                return "%02d:%02d" % divmod(res, 60)
+            return self._vehicle.state.get("remainingChargingTime")
+
+    @property
+    def remaining_charging_time_unit(self):
+        return "min"
 
     @property
     def remaining_charging_time_supported(self):
         check = self._vehicle.state.get("remainingChargingTime")
-        if check and parse_float(check):
+        if check is not None:
             return True
 
     @property
