@@ -426,7 +426,7 @@ class AudiConnectVehicle:
         err = message + ": " + str(exception).rstrip("\n")
         if not err in self._logged_errors:
             self._logged_errors.add(err)
-            _LOGGER.error(err)
+            _LOGGER.error(err, exception)
 
     async def update_vehicle_statusreport(self):
         if not self.support_status_report:
