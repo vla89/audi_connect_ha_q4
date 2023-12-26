@@ -181,7 +181,7 @@ class AudiService:
             # )
         self._api.use_token(self._bearer_token_json);
         data = await self._api.get(
-            "https://emea.bff.cariad.digital/vehicle/v1/vehicles/{vin}/selectivestatus?jobs=all".format(
+            "https://emea.bff.cariad.digital/vehicle/v1/vehicles/{vin}/selectivestatus?jobs=access,charging,fuelStatus,climatisation,measurements".format(
                 vin=vin.upper(),
             )
         )
