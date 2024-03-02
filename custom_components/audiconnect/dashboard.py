@@ -126,10 +126,11 @@ class Instrument:
 
 
 class Sensor(Instrument):
-    def __init__(self, attr, name, icon, unit):
+    def __init__(self, attr, name, device_class, icon, unit):
         super().__init__(component="sensor", attr=attr, name=name, icon=icon)
         self._unit = unit
         self._convert = False
+        self.device_class = device_class
 
     def configurate(self, unit_system=None, **config):
         if self._unit and unit_system == "imperial" and "km" in self._unit:
@@ -385,116 +386,131 @@ def create_instruments():
         TripData(attr="longterm_reset", name="LongTerm Trip User Reset"),
         Lock(),
         Preheater(),
-        Sensor(attr="model", name="Model", icon="mdi:car-info", unit=None),
-        Sensor(attr="mileage", name="Mileage", icon="mdi:speedometer", unit="km"),
-        Sensor(attr="range", name="Range", icon="mdi:gas-station", unit="km"),
+        Sensor(attr="model", name="Model", icon="mdi:car-info", device_class=None, unit=None),
+        Sensor(attr="mileage", name="Mileage", icon="mdi:speedometer", device_class="distance", unit="km"),
+        Sensor(attr="range", name="Range", icon="mdi:car-arrow-right", device_class="distance", unit="km"),
         Sensor(
             attr="service_inspection_time",
             name="Service inspection time",
             icon="mdi:room-service-outline",
+            device_class=None,
             unit="days",
         ),
         Sensor(
             attr="service_inspection_distance",
             name="Service inspection distance",
             icon="mdi:room-service-outline",
+            device_class="distance",
             unit="km",
         ),
         Sensor(
-            attr="oil_change_time", name="Oil change time", icon="mdi:oil", unit="days"
+            attr="oil_change_time", name="Oil change time", icon="mdi:oil", device_class=None, unit="days"
         ),
         Sensor(
             attr="oil_change_distance",
             name="Oil change distance",
             icon="mdi:oil",
+            device_class="distance",
             unit="km",
         ),
-        Sensor(attr="oil_level", name="Oil level", icon="mdi:oil", unit="%"),
+        Sensor(attr="oil_level", name="Oil level", icon="mdi:oil", device_class=None, unit="%"),
         Sensor(
             attr="charging_state",
             name="Charging state",
             icon="mdi:car-battery",
+            device_class=None,
             unit=None,
         ),
         Sensor(
-            attr="charging_mode", name="Charging mode", icon=None, unit=None
+            attr="charging_mode", name="Charging mode", icon=None, device_class=None, unit=None
         ),
         Sensor(
-            attr="energy_flow", name="Energy flow", icon=None, unit=None
+            attr="energy_flow", name="Energy flow", icon=None, device_class=None, unit=None
         ),
         Sensor(
             attr="max_charge_current",
             name="Max charge current",
             icon="mdi:current-ac",
+            device_class="current",
             unit="A",
         ),
         Sensor(
             attr="primary_engine_type",
             name="Primary engine type",
             icon="mdi:engine",
+            device_class=None,
             unit=None,
         ),
         Sensor(
             attr="secondary_engine_type",
             name="Secondary engine type",
             icon="mdi:engine",
+            device_class=None,
             unit=None,
         ),
         Sensor(
             attr="primary_engine_range",
             name="Primary engine range",
             icon="mdi:gas-station-outline",
+            device_class="distance",
             unit="km",
         ),
         Sensor(
             attr="secondary_engine_range",
             name="Secondary engine range",
             icon="mdi:gas-station-outline",
+            device_class="distance",
             unit="km",
         ),
         Sensor(
-            attr="charging_power", name="Charging power", icon="mdi:flash", unit="kW"
+            attr="charging_power", name="Charging power", icon="mdi:flash", device_class="power", unit="kW"
         ),
         Sensor(
             attr="actual_charge_rate",
             name="Charging rate",
             icon="mdi:electron-framework",
+            device_class=None,
             unit=None,
         ),
-        Sensor(attr="tank_level", name="Tank level", icon="mdi:gas-station", unit="%"),
+        Sensor(attr="tank_level", name="Tank level", icon="mdi:gas-station", device_class=None, unit="%"),
         Sensor(
             attr="state_of_charge",
             name="State of charge",
-            icon="mdi:ev-station",
+            icon=None,
+            device_class="battery",
             unit="%",
         ),
         Sensor(
             attr="remaining_charging_time",
             name="Remaining charge time",
             icon="mdi:battery-charging",
-            unit=None,
+            device_class="duration",
+            unit="min",
         ),
-        Sensor(attr="plug_state", name="Plug state", icon="mdi:power-plug", unit=None),
+        Sensor(attr="plug_state", name="Plug state", icon="mdi:power-plug", device_class=None, unit=None),
         Sensor(
             attr="doors_trunk_status",
             name="Doors/trunk state",
             icon="mdi:car-door",
+            device_class=None,
             unit=None,
         ),
         Sensor(
             attr="climatisation_state",
             name="Climatisation state",
             icon="mdi:air-conditioner",
+            device_class=None,
             unit=None,
         ),
         Sensor(
             attr="outdoor_temperature",
             name="Outdoor Temperature",
             icon="mdi:temperature-celsius",
+            device_class="temperature",
             unit="°C",
         ),
-        Sensor(attr="preheater_duration", name="Preheater runtime", icon="mdi:clock", unit="Min"),
-        Sensor(attr="preheater_remaining", name="Preheater remaining", icon="mdi:clock", unit="Min"),
+        Sensor(attr="preheater_duration", name="Preheater runtime", icon="mdi:clock", device_class="duration", unit="min"),
+        Sensor(attr="preheater_remaining", name="Preheater remaining", icon="mdi:clock", device_class="duration", unit="min"),
         BinarySensor(attr="sun_roof", name="Sun roof", device_class="window"),
         BinarySensor(
             attr="parking_light",
