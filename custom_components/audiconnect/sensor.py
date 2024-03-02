@@ -1,7 +1,18 @@
 """Support for Audi Connect sensors."""
 import logging
 
-from homeassistant.const import CONF_USERNAME
+from homeassistant.components.sensor import DEVICE_CLASSES, SensorEntity
+
+from homeassistant.const import (
+    CONF_USERNAME,
+    UnitOfLength,
+    PERCENTAGE,
+    UnitOfSpeed,
+    UnitOfTime,
+    UnitOfPower,
+    UnitOfTemperature,
+    UnitOfEnergy,
+)
 
 from .audi_entity import AudiEntity
 from .const import DOMAIN
@@ -38,3 +49,9 @@ class AudiSensor(AudiEntity):
     def unit_of_measurement(self):
         """Return the unit of measurement."""
         return self._instrument.unit
+
+    @property
+    def device_class(self):
+        """Return the class of this sensor, from SensorDeviceClass."""
+        if self._instrument.device_class in DEVICE_CLASSES:
+            return self._instrument.device_class
