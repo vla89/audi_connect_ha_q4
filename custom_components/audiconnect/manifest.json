@@ -1,11 +1,11 @@
 {
   "domain": "audiconnect",
-  "name": "Audi Connect",
+  "name": "Audi Connect Q4",
   "config_flow": true,
-  "documentation": "https://github.com/arjenvrh/audi_connect_ha",
-  "issue_tracker": "https://github.com/arjenvrh/audi_connect_ha/issues",
+  "documentation": "https://github.com/vla89/audi_connect_ha_q4",
+  "issue_tracker": "https://github.com/vla89/audi_connect_ha_q4/issues",
   "requirements": ["beautifulsoup4"],
   "dependencies": [],
-  "codeowners": ["@arjenvrh"],
-  "version": "2021.1.1"
+  "codeowners": ["@arjenvrh, @vla89"],
+  "version": "2024.7.1"
 }
